@@ -180,8 +180,11 @@ git clone https://github.com/OliverNichols/selenium-example.git
 cd selenium_example
 ```
 
-Install all `pip` dependencies:
+Install all `pip` dependencies in a virtual environment:
 ```bash 
+sudo apt install python3-pip python3-venv -y
+python3 -m venv venv
+source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
@@ -191,12 +194,21 @@ Let's see what the application is doing.
 
 Use
 ```py
+python3 create.py
 python3 app.py
 ```
 
 You should be able to see that we can submit entries that will show in the **History** section of the index page.
 
 Submitting an empty entry will give us an error, saying "*The name field can't be empty!*"
+
+### Getting the XPath
+
+Let's get the XPath of where the error message should be.
+
+On your app, submit an empty name using the `🗸`. An error message should pop up as expected.
+
+Follow the tutorial [here](#XPaths) to get the XPath of this error message.
 
 ### Writing a test case
 
@@ -206,20 +218,29 @@ In `tests/test_int.py, line 62`, configure `test_empty_validation` as follows:
 
 ```py
     def test_empty_validation(self):
-        self.submit('')
+        self.submit_input('')
         self.assertIn(url_for('index'), self.driver.current_url)
 
-        text = self.driver.find_element_by_xpath('/html/body/div/i').text
+        text = self.driver.find_element_by_xpath('<XPath>').text
         self.assertIn("The name field can't be empty!", text)
 
         entries = Games.query.all()
         self.assertEqual(len(entries), 0) # database should be empty
 ```
 
+Make sure to replace `'<XPATH>'` with the XPath we found in the previous step!
+
 We are checking 3 things here:
 1. We are redirected back to the index page correctly,
 2. The error message is displayed properly,
 3. The database is still empty, so the empty entry was ignored as expected.
+
+### Running the tests
+
+Run the tests using
+```py
+python3 -m pytest
+```
 
 ## Exercises
 
