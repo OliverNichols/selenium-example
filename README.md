@@ -54,27 +54,34 @@ class TestBase(LiveServerTestCase):
 
 ### Test Cases
 
-Once we have set-up a `TestBase` class, which inherits from the `LiveServerTestCase` class, we can define some test cases using the driver we instantiated.
+Once we have created a `TestBase` class, which inherits from the `LiveServerTestCase` class, we can define some test cases.
 
-Each test case must be defined within a class which inherits from `TestBase`. It should look something like this:
+Each test case must be defined within a class which inherits from `TestBase`. 
+
+It should now look something like this:
 
 ```py
 class TestBase(LiveServerTestCase):
-    ...
+    def create_app(self):
+        ...
+        return app
+
+    def setUp(self):
+        ...
+
+    def tearDown(self):
+        ...
 
 class TestCase(TestBase):
     def test_case_1(self):
         ...
 ```
 
-
-### Selenium
-
-#### XPaths
+### XPaths
 
 XPaths are essentially a way to find any element, such as an input field or button, on any HTML or XML document. 
 
-Selenium can use this XPath to find the element we want to manipulate in our testing.
+Selenium can use an XPath to find the element we want, and we can then manipulate this element in our testing.
 
 <details>
 <summary>Finding the XPath of an element in Chrome</summary>
@@ -88,7 +95,7 @@ Selenium can use this XPath to find the element we want to manipulate in our tes
 </details>
 <br/>
 
-#### Elements
+### Selenium
 
 We can use the `selenium` driver to find elements on a page, and do *things* with these elements.
 
