@@ -2,7 +2,7 @@
 
 ### Requirements
 
-An **Ubuntu 18.04** VM with Python installed.
+An **Ubuntu 18.04** VM with Python installed. This is unlikely to work on Ubuntu 20.04.
 
 ### Setup
 

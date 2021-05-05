@@ -1,21 +1,18 @@
-import unittest
-from urllib.request import urlopen
-from flask import url_for
-
 from flask_testing import LiveServerTestCase
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from application import app, db
-from application.models import Games
+from urllib.request import urlopen
 
-port = 5050 # test port, doesn't need to be open
+from flask import url_for
+from application import app, db
 
 class TestBase(LiveServerTestCase):
+    TEST_PORT = 5050 # test port, doesn't need to be open
+
     def create_app(self):
 
         app.config.update(
             SQLALCHEMY_DATABASE_URI="sqlite:///test.db",
-            LIVESERVER_PORT=port,
+            LIVESERVER_PORT=self.TEST_PORT,
             
             DEBUG=True,
             TESTING=True
@@ -24,20 +21,15 @@ class TestBase(LiveServerTestCase):
         return app
 
     def setUp(self):
-        chrome_options = Options()
 
-        chrome_options.binary_location = "/usr/bin/chromium-browser"
-
+        chrome_options = webdriver.chrome.options.Options()
         chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--disable-dev-shm-usage')
-        chrome_options.add_argument("--remote-debugging-port=9222")
 
-        self.driver = webdriver.Chrome(executable_path="/usr/bin/chromedriver", options=chrome_options)
+        self.driver = webdriver.Chrome(options=chrome_options)
 
-        db.create_all()
+        db.create_all() # create schema before we try to get the page
 
-        self.driver.get(f'http://localhost:{port}')
+        self.driver.get(f'http://localhost:{self.TEST_PORT}')
 
     def tearDown(self):
         self.driver.quit()
@@ -45,19 +37,19 @@ class TestBase(LiveServerTestCase):
         db.drop_all()
 
     def test_server_is_up_and_running(self):
-        response = urlopen(f'http://localhost:{port}')
+        response = urlopen(f'http://localhost:{self.TEST_PORT}')
         self.assertEqual(response.code, 200)
 
 class TestAdd(TestBase):
-    test_cases = 'Chess', ''
+    TEST_CASES = 'Chess', ''
 
     def test_create(self):
-        for case in self.test_cases:
+        for case in self.TEST_CASES:
 
             self.driver.find_element_by_xpath('//*[@id="name"]').send_keys(case)
             self.driver.find_element_by_xpath('//*[@id="submit"]').click()
 
-            assert url_for('index') in self.driver.current_url
+            self.assertIn(url_for('index'), self.driver.current_url)
 
             text = self.driver.find_element_by_xpath('/html/body/ul/li[1]').text
-            assert text == case
+            self.assertEqual(text, case)
