@@ -86,6 +86,8 @@ Selenium can use an XPath to find the element we want, and we can then manipulat
 <details>
 <summary>Finding the XPath of an element in Chrome</summary>
 
+Once your application is running, navigate to the page the element belongs to and complete the following steps:
+
 1. Right click on the element, and click `Inspect`. The HTML for the element should pop up.
 2. Right click on the HTML for the element in the inspect tab, it should be highlighted.
 3. Choose `Copy`, and then `Copy XPath`.
@@ -151,7 +153,9 @@ class TestCreate(TestBase):
 
 ### Requirements
 
-An **Ubuntu 18.04** VM with Python installed. This is unlikely to work on Ubuntu 20.04.
+An **Ubuntu 18.04** VM with Python installed and port 5000 open. 
+
+*Note: This is unlikely to work on Ubuntu 20.04.*
 
 ### Setup
 
@@ -163,12 +167,62 @@ sudo apt install chromium-browser -y
 ```
 
 Installing the driver
-```
+```bash
 sudo apt install wget unzip -y
 wget https://chromedriver.storage.googleapis.com/90.0.4430.24/chromedriver_linux64.zip
 sudo unzip chromedriver_linux64.zip -d /usr/bin
 rm chromedriver_linux64.zip
 ```
 
+Clone down this repository and change directory into it:
+```bash
+git clone https://github.com/OliverNichols/selenium-example.git
+cd selenium_example
+```
 
+Install all `pip` dependencies:
+```bash 
+pip3 install -r requirements.txt
+```
 
+### Run the application
+
+Let's see what the application is doing.
+
+Use
+```py
+python3 app.py
+```
+
+You should be able to see that we can submit entries that will show in the **History** section of the index page.
+
+Submitting an empty entry will give us an error, saying "*The name field can't be empty!*"
+
+### Writing a test case
+
+Let's create a test case to check the validation of our form, so that we know the user can't submit an empty input.
+
+In `tests/test_int.py, line 57`, configure `test_empty_validation` as follows:
+
+```py
+    def test_empty_validation(self):
+        self.submit('')
+        self.assertIn(url_for('index'), self.driver.current_url)
+
+        text = self.driver.find_element_by_xpath('/html/body/div/i').text
+        self.assertIn("The name field can't be empty", text)
+
+        entries = Games.query.all()
+        self.assertEqual(len(entries), 0) # database should be empty
+```
+
+We are checking 3 things here:
+1. We are redirected back to the index page correctly,
+2. The error message is displayed properly,
+3. The database is still empty, so the empty entry was ignored as expected.
+
+## Exercises
+
+Write a test case for `test_length_validation`. If the submitted input has a length greater than 30, the error "*This name is too long!*" should be displayed, and the input should not be added to the database.
+
+Use the `test_empty_validation` method for reference.

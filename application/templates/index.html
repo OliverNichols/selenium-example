@@ -13,6 +13,11 @@
                 {{ form.submit }}
             {{ message }}
             </form>
+
+            {% if error %}
+                <br/>
+                <i>{{error}}</i>
+            {% endif %}
         </div>
 
         <br/>
