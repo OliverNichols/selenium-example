@@ -7,27 +7,18 @@ from application.forms import BasicForm
 @app.route('/')
 @app.route('/<error>')
 def index(error=None):
-    form = BasicForm()
+    form = BasicForm(request.form)
 
     history = Games.query.order_by(Games.id.desc()).limit(5).all()
-
     return render_template('index.html', form=form, history=history, error=error)
 
 @app.route('/add', methods=['POST'])
 def add():
+    form = BasicForm(request.form)
 
-    name = request.form.get('name', '')
-    error = None
-
-    if name.strip() == '':
-        error = "The name field can't be empty!"
-
-    elif len(name) > 30: 
-        error = "This name is too long!"
-
-    else:
-        new_game = Games(name=name)
-        db.session.add(new_game)
+    if form.validate_on_submit():
+        db.session.add(Games(name=form.name.data))
         db.session.commit()
 
+    error = next(iter(form.name.errors), None)
     return redirect(url_for('index', error=error))
