@@ -1,5 +1,6 @@
 import unittest
 from urllib.request import urlopen
+from flask import url_for
 
 from flask_testing import LiveServerTestCase
 from selenium import webdriver
@@ -7,14 +8,17 @@ from selenium.webdriver.chrome.options import Options
 from application import app, db
 from application.models import Games
 
-port = 5000
+port = 5050 # test port, doesn't need to be open
 
 class TestBase(LiveServerTestCase):
     def create_app(self):
 
         app.config.update(
             SQLALCHEMY_DATABASE_URI="sqlite:///test.db",
-            DEBUG=True
+            LIVESERVER_PORT=port,
+            
+            DEBUG=True,
+            TESTING=True
         )
 
         return app
@@ -38,13 +42,22 @@ class TestBase(LiveServerTestCase):
     def tearDown(self):
         self.driver.quit()
 
+        db.drop_all()
+
     def test_server_is_up_and_running(self):
         response = urlopen(f'http://localhost:{port}')
         self.assertEqual(response.code, 200)
 
-class TestCreate(TestBase):
-    def test_create(self):
-        pass
+class TestAdd(TestBase):
+    test_cases = 'Chess', ''
 
-if __name__=='__main__':
-    unittest.main(port=port)
+    def test_create(self):
+        for case in self.test_cases:
+
+            self.driver.find_element_by_xpath('//*[@id="name"]').send_keys(case)
+            self.driver.find_element_by_xpath('//*[@id="submit"]').click()
+
+            assert url_for('index') in self.driver.current_url
+
+            text = self.driver.find_element_by_xpath('/html/body/ul/li[1]').text
+            assert text == case
