@@ -202,7 +202,7 @@ Submitting an empty entry will give us an error, saying "*The name field can't b
 
 Let's create a test case to check the validation of our form, so that we know the user can't submit an empty input.
 
-In `tests/test_int.py, line 57`, configure `test_empty_validation` as follows:
+In `tests/test_int.py, line 62`, configure `test_empty_validation` as follows:
 
 ```py
     def test_empty_validation(self):
