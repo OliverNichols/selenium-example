@@ -12,7 +12,7 @@ We can use the `LiveServerTestCase` class to create a live instance of our appli
 from flask_testing import LiveServerTestCase
 ```
 
-This class should be inherited for our `TestBase`, and we must define the following methods:
+We must create a subclass of this, and define the following methods:
 
 1. `create_app`: run once, at the very start of testing - here, we overwrite the app's config
 2. `setUp`: run before every test case - here, we setup the driver and create our test database
