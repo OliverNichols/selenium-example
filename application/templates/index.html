@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>Game Generator</title>
+    </head>
+    <body>
+        <h1>Game Generator</h1>
+
+        <div class='form'>
+            <h2>Creation Form</h2>
+            <form action="{{ url_for('add') }}" method='POST'>
+                {{ form.hidden_tag() }}
+                {{ form.name.label }} {{ form.name }}
+                {{ form.submit }}
+            {{ message }}
+            </form>
+        </div>
+
+        <br/>
+
+        {% if history %}
+            <h2>History</h2>
+            <ul>
+            {% for entry in history %}
+                <li> {{ entry.name }} </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+    </body>
+</html>
