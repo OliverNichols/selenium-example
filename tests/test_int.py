@@ -42,7 +42,7 @@ class TestBase(LiveServerTestCase):
         self.assertEqual(response.code, 200)
 
 class TestAdd(TestBase):
-    TEST_CASES = 'Chess', 'Backgammon', 'Hungry Hungry Hippos', 'Cluedo', 'Monopoly', 'Borderlands 3'
+    TEST_CASES = 'Chess', 'Backgammon', 'Hungry Hungry Hippos', '#@!%$', ';DROP TABLE games;', 'Borderlands 3'
 
     def submit_input(self, case): # custom method
         self.driver.find_element_by_xpath('//*[@id="name"]').send_keys(case)
@@ -64,7 +64,17 @@ class TestAdd(TestBase):
         self.assertIn(url_for('index'), self.driver.current_url)
 
         text = self.driver.find_element_by_xpath('/html/body/div/i').text
-        self.assertIn("The name field can't be empty", text)
+        self.assertIn("The name field can't be empty!", text)
+
+        entries = Games.query.all()
+        self.assertEqual(len(entries), 0) # database should be empty
+
+    def test_length_validation(self):
+        self.submit_input('!'*31)
+        self.assertIn(url_for('index'), self.driver.current_url)
+
+        text = self.driver.find_element_by_xpath('/html/body/div/i').text
+        self.assertIn("This name is too long!", text)
 
         entries = Games.query.all()
         self.assertEqual(len(entries), 0) # database should be empty

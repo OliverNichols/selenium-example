@@ -210,7 +210,7 @@ In `tests/test_int.py, line 57`, configure `test_empty_validation` as follows:
         self.assertIn(url_for('index'), self.driver.current_url)
 
         text = self.driver.find_element_by_xpath('/html/body/div/i').text
-        self.assertIn("The name field can't be empty", text)
+        self.assertIn("The name field can't be empty!", text)
 
         entries = Games.query.all()
         self.assertEqual(len(entries), 0) # database should be empty
