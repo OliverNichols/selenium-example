@@ -72,7 +72,7 @@ class TestBase(LiveServerTestCase):
     def tearDown(self):
         ...
 
-class TestCase(TestBase):
+class TestExample(TestBase):
     def test_case_1(self):
         ...
 ```
