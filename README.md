@@ -166,17 +166,18 @@ Installing the browser
 sudo apt install chromium-browser -y
 ```
 
-Installing the driver
+Installing the driver (must have the browser installed for this to work!)
 ```bash
 sudo apt install wget unzip -y
-wget https://chromedriver.storage.googleapis.com/90.0.4430.24/chromedriver_linux64.zip
+version=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$(chromium-browser --version | grep -oP 'Chromium \K\d+'))
+wget https://chromedriver.storage.googleapis.com/${version}/chromedriver_linux64.zip
 sudo unzip chromedriver_linux64.zip -d /usr/bin
 rm chromedriver_linux64.zip
 ```
 
 Clone down this repository and change directory into it:
 ```bash
-git clone https://github.com/OliverNichols/selenium-example.git
+git clone https://github.com/QACTrainers/selenium-example.git
 cd selenium_example
 ```
 
